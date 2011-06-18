@@ -13,11 +13,9 @@ class FacebookManager(QObject) :
     
     def __init__(self, settings) :
         QObject.__init__(self)
-        #self.accessToken = authToken
         self.settings = settings
         
         self.NetworkManager = QNetworkAccessManager()
-        #QObject.connect(self.NetworkManager, SIGNAL("finished(QNetworkReply*)"), self.__handleReply)
         self.NetworkManager.finished.connect(self.__handleReply)
         
         self.queryString = "SELECT title_html, created_time, now() FROM notification WHERE recipient_id = me() AND is_unread = 1 "
@@ -94,13 +92,17 @@ class FacebookManager(QObject) :
                 print("title has " + str(children.length()) + " children")
                 
                 for j in range(children.length()) :
-                    print(notificationList.at(i).nodeType())
+                    print(notification.nodeType())
                     print(children.at(j).nodeName())
                     
-                if (int(notificationList.at(i).namedItem("anon").toElement().text()) - int(notificationList.at(i).namedItem("created_time").toElement().text())) <= self.settings["pollinterval"] :
+                if (int(notification.namedItem("anon").toElement().text()) - int(notification.namedItem("created_time").toElement().text())) <= self.settings["pollinterval"] :
                     print("\tNotification " + str(i) + " is New! Firing KNotification::event()")
-                    #self.emit(SIGNAL("newNotification(QDomNode *)"), notificationList.at(i))
-                    KNotification.event(KNotification.Notification, "You're Popular! :P",notificationList.at(i).namedItem("title_html").toElement().text(), QPixmap(self.settings["notification_icon"]))
+                    
+                    icon = QPixmap(self.settings["notification_icon"])
+                    text = self.settings["notification_title"]
+                    text.replace("%title_html%", notification.namedItem("title_html").toElement().text())
+                    
+                    KNotification.event(KNotification.Notification, "Facebook", text, icon)
                 
         else :
             print(">>>>>>>> ERROR! : Facebook Server returned Unexpected Output : ")

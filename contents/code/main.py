@@ -58,7 +58,7 @@ class FacebookWidget(plasmascript.Applet):
         cmd = str(self.settings["browser"]) + " http://www.facebook.com/"
         print("\tLaunching : " + cmd)
         popen2.Popen3(cmd)
-#	popen2.Popen3("xdg-open http://www.facebook.com/")
+#   popen2.Popen3("xdg-open http://www.facebook.com/")
         
     def onQueryFail(self) :
         self.updateIcon(" ")
@@ -80,14 +80,7 @@ class FacebookWidget(plasmascript.Applet):
         
         self.background.setIcon(QIcon(pix))
         self.background.update()
-        
-    #def writeDefaults(self, path) :
-        #c = []
-        #c.append("pollinterval=3")
-        #c.append("notification_icon=" + unicode(self.package().path()) + "contents/facebook_icon.svg")
-        #c.append("background_icon=" + unicode(self.package().path()) + "contents/facebook_icon.svg")
-        #c.append("browser=xdg-open")
-        
+                
         
     def writeSettings(self) :
         settings = self.settings
@@ -98,6 +91,8 @@ class FacebookWidget(plasmascript.Applet):
         cg.writeEntry("notification_icon", settings["notification_icon"])
         cg.writeEntry("background_icon", settings["background_icon"])
         cg.writeEntry("browser", settings["browser"])
+        cg.writeEntry("notification_body" , settings["notification_body"])
+        cg.writeEntry("notification_title" , settings["notification_title"])
             
         cg.sync()
         
@@ -111,6 +106,8 @@ class FacebookWidget(plasmascript.Applet):
         settings["notification_icon"] = cg.readEntry("notification_icon", unicode(self.package().path()) + "contents/facebook_icon.svg").toString()
         settings["background_icon"] = cg.readEntry("background_icon", unicode(self.package().path()) + "contents/facebook_icon.svg").toString()
         settings["browser"] = cg.readEntry("browser", "xdg-open").toString()
+        settings["notification_body"] = cg.readEntry("notification_body", "%title_html%")
+        settings["notification_title"] = cg.readEntry("notification_title", "Facebook")
         #self.writeSettings(settings)
         #c.append("access_token=")
         
